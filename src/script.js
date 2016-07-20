@@ -15,7 +15,7 @@ var navWidth = 150;
 var displayS0 = false;
 
 var panelPos = [];
-var idSlPanel = 0;
+var idSelectedPanel = 9; //TODO UPDATE IT
 
 $(document).ready(function(){
     
@@ -25,10 +25,11 @@ $(document).ready(function(){
 
     $('header').css("position", "fixed");
 
-    $('#navS0 li').each(function(index){
-    	$(this).on("click", index, selectAnotherPanel);
+    $('#navS0 ul li').each(function(index){
+    	// $(this).on("click", index, selectAnotherPanel);
+    	$(this).on("click", index, selectAnotherPanel2);
     });
-
+	
     width = $(window).width();
     height = $(window).height();
 
@@ -50,9 +51,30 @@ $(document).ready(function(){
 	    	$('footer').hide();
 	    }
 
+
+
+	    $('#navS0 ul li').each(function(index){
+	    	if($(this).attr('class')==="selected"){
+	    		idSelectedPanel = index;
+	    	}  	
+	    });
+
+	    sortPanels2();
+
+
+
 	    $('.panel').css({"width": pWidth+"px", "height": pHeight+"px", "position":"fixed"});
     	$('.panel:not(:first)').children().hide();
     	setPanelsPosition();
+
+
+    	
+
+    	$('.panel').each(function(index){
+    		$(this).hide();
+			$(this).delay(500*index).fadeIn();
+		});
+
 
     } else {
 
@@ -155,9 +177,77 @@ function sortAndDisplay(){
 	}
 
 }
+function selectAnotherPanel2(data){
+
+	var index = data.data;
+
+	var value = '';
+	if(index===0) value = "current_projects.html";
+	else if(index===1) value = "collaboration.html";
+	else if(index===2) value = "about.html";
+
+	var className = $(this).attr('class');
+
+	if(className !== 'selected') window.location = value;
+
+}
+/* function selectAnotherPanel(data){
+
+	//--------- new ----------//
+
+	var index = data.data;
+
+	var value = '';
+	if(index===0) value = "current_projects";
+	else if(index===1) value = "collaboration";
+	else if(index===2) value = "about";
+
+	$.get( "#", { p: value} );
+
+
+	//------- old ----------//
+
+	idSelectedPanel = index;
+
+	var className = $(this).attr('class');
+
+	if(className !== 'selected'){
+
+		$('.selected').removeClass();
+		$(this).attr('class', 'selected');
+		
+		//fadeAllPanels();
+		$('.panel').hide();
+		$('.panel').each(sortAndDisplay);
+	
+	}
+
+
+}*/
+function sortPanels2(){
+
+	if(idSelectedPanel===1){
+
+		var idFirstPanel =  '#panel'+ 0;
+		$(idFirstPanel).appendTo('#panel');
+
+	} else if(idSelectedPanel===2){
+
+		var idFirstPanel =  '#panel'+ 0;
+		$(idFirstPanel).appendTo('#panel');
+
+		var idSecondPanel =  '#panel'+ 1;
+		$(idSecondPanel).appendTo('#panel');
+
+	}
+
+	$('.panel').each(function(index){
+		$(this).css({"z-index": 10-index});
+	});
+}
 function sortPanels(){
 
-	var tId = idSlPanel;
+	var tId = idSelectedPanel;
 
 	tId--;
 	if(tId<0)tId=panelPos.length-1;
@@ -175,25 +265,6 @@ function sortPanels(){
 
 	}
 
-}
-function selectAnotherPanel(data){
-
-	// console.log(data);
-
-	idSlPanel = data.data;
-
-	var className = $(this).attr('class');
-
-	if(className !== 'selected'){
-
-		$('.selected').removeClass();
-		$(this).attr('class', 'selected');
-		
-		//fadeAllPanels();
-		$('.panel').hide();
-		$('.panel').each(sortAndDisplay);
-	
-	}
 }
 function reinitElementPosition(){
 
@@ -294,7 +365,7 @@ function setPanelsPosition(){
 	panelPos[0] = [tl-offX, yPos];
 	panelPos[1] = [tl+offsetX-offX, yPos-offsetY]; 
 	panelPos[2] = [tl+offsetX*2-offX, yPos-offsetY*2];
-	panelPos[3] = [tl+offsetX*3-offX, yPos-offsetY*3];
+	//panelPos[3] = [tl+offsetX*3-offX, yPos-offsetY*3];
 
 	$('.panel').each(function(index){
 		$(this).css({"left": panelPos[index][0]+"px", "top": panelPos[index][1]+"px"});
